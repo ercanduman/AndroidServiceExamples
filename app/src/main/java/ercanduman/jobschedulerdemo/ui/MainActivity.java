@@ -1,8 +1,12 @@
 package ercanduman.jobschedulerdemo.ui;
 
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.app.job.JobInfo;
 import android.app.job.JobScheduler;
 import android.content.ComponentName;
+import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -11,17 +15,21 @@ import android.view.View;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.content.ContextCompat;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 
 import ercanduman.jobschedulerdemo.R;
 import ercanduman.jobschedulerdemo.services.ExampleJobService;
+import ercanduman.jobschedulerdemo.services.ForegroundServiceExample;
 
+import static ercanduman.jobschedulerdemo.Constants.CHANNEL_ID;
 import static ercanduman.jobschedulerdemo.Constants.JOB_ID;
 
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = "MainActivity";
+    public static final String INPUT_EXTRA = "INPUT_EXTRA";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,6 +37,8 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+        createNotificationChannel();
 
         FloatingActionButton fab = findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -39,11 +49,24 @@ public class MainActivity extends AppCompatActivity {
                             @Override
                             public void onClick(View view) {
                                 Log.d(TAG, "onClick: will start the job...");
-                                scheduleJob();
+//                                scheduleJob();
+                                startForegroundService();
                             }
                         }).show();
             }
         });
+    }
+
+    private void startForegroundService() {
+        String textToPass = "Example text";
+        Intent serviceIntent = new Intent(this, ForegroundServiceExample.class);
+        serviceIntent.putExtra(INPUT_EXTRA, textToPass);
+        ContextCompat.startForegroundService(this, serviceIntent);
+    }
+
+    private void stopForegroundService() {
+        Intent serviceIntent = new Intent(this, ForegroundServiceExample.class);
+        stopService(serviceIntent);
     }
 
     private void scheduleJob() {
@@ -72,6 +95,22 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    public void createNotificationChannel() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            Log.d(TAG, "createNotificationChannel: Notification created...");
+            NotificationChannel serviceChannel = new NotificationChannel(
+                    CHANNEL_ID,
+                    "Example Service Channel",
+                    NotificationManager.IMPORTANCE_DEFAULT
+            );
+
+            NotificationManager manager = getSystemService(NotificationManager.class);
+            if (manager != null) {
+                manager.createNotificationChannel(serviceChannel);
+            }
+        }
+    }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -90,7 +129,8 @@ public class MainActivity extends AppCompatActivity {
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_stop_job) {
             Log.d(TAG, "onOptionsItemSelected: will stop job....");
-            cancelJob();
+//            cancelJob();
+            stopForegroundService();
             return true;
         }
 
