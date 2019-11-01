@@ -23,6 +23,7 @@ import com.google.android.material.snackbar.Snackbar;
 import ercanduman.jobschedulerdemo.R;
 import ercanduman.jobschedulerdemo.services.ExampleJobService;
 import ercanduman.jobschedulerdemo.services.ForegroundServiceExample;
+import ercanduman.jobschedulerdemo.services.IntentServiceExample;
 
 import static ercanduman.jobschedulerdemo.Constants.CHANNEL_ID;
 import static ercanduman.jobschedulerdemo.Constants.JOB_ID;
@@ -50,11 +51,19 @@ public class MainActivity extends AppCompatActivity {
                             public void onClick(View view) {
                                 Log.d(TAG, "onClick: will start the job...");
 //                                scheduleJob();
-                                startForegroundService();
+//                                startForegroundService();
+                                startIntentService();
                             }
                         }).show();
             }
         });
+    }
+
+    private void startIntentService() {
+        String textToPass = "Intent service example text";
+        Intent serviceIntent = new Intent(this, IntentServiceExample.class);
+        serviceIntent.putExtra(INPUT_EXTRA, textToPass);
+        ContextCompat.startForegroundService(this, serviceIntent);
     }
 
     private void startForegroundService() {
@@ -130,7 +139,8 @@ public class MainActivity extends AppCompatActivity {
         if (id == R.id.action_stop_job) {
             Log.d(TAG, "onOptionsItemSelected: will stop job....");
 //            cancelJob();
-            stopForegroundService();
+//            stopForegroundService();
+            // Do not need to call stop Intent service, it finishes automatically when work is done.
             return true;
         }
 

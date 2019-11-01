@@ -4,6 +4,7 @@
     package="ercanduman.jobschedulerdemo">
 
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
 
     <application
@@ -28,9 +29,8 @@
         <service
             android:name=".services.ExampleJobService"
             android:permission="android.permission.BIND_JOB_SERVICE" />
-
         <service android:name=".services.ForegroundServiceExample" />
-
+        <service android:name=".services.IntentServiceExample" />
     </application>
 
 </manifest>
