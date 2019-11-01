@@ -27,9 +27,9 @@
         </activity>
 
         <service
-            android:name=".services.ExampleJobService"
+            android:name=".services.JobServiceExample"
             android:permission="android.permission.BIND_JOB_SERVICE" />
-        <service android:name=".services.ForegroundServiceExample" />
+        <service android:name=".services.ServiceExample" />
         <service android:name=".services.IntentServiceExample" />
         <service
             android:name=".services.JobIntentServiceExample"

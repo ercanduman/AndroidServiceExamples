@@ -4,8 +4,8 @@ import android.app.job.JobParameters;
 import android.app.job.JobService;
 import android.util.Log;
 
-public class ExampleJobService extends JobService {
-    private static final String TAG = "ExampleJobService";
+public class JobServiceExample extends JobService {
+    private static final String TAG = "JobServiceExample";
     private boolean jobCancelled;
 
     @Override

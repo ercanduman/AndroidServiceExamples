@@ -16,7 +16,7 @@ import ercanduman.jobschedulerdemo.ui.MainActivity;
 import static ercanduman.jobschedulerdemo.Constants.CHANNEL_ID;
 import static ercanduman.jobschedulerdemo.Constants.JOB_ID;
 
-public class ForegroundServiceExample extends Service {
+public class ServiceExample extends Service {
     private static final String TAG = "ForegroundService";
 
     @Override

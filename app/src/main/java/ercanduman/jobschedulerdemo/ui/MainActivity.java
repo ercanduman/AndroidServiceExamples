@@ -21,8 +21,8 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 
 import ercanduman.jobschedulerdemo.R;
-import ercanduman.jobschedulerdemo.services.ExampleJobService;
-import ercanduman.jobschedulerdemo.services.ForegroundServiceExample;
+import ercanduman.jobschedulerdemo.services.JobServiceExample;
+import ercanduman.jobschedulerdemo.services.ServiceExample;
 import ercanduman.jobschedulerdemo.services.IntentServiceExample;
 import ercanduman.jobschedulerdemo.services.JobIntentServiceExample;
 
@@ -76,18 +76,18 @@ public class MainActivity extends AppCompatActivity {
 
     private void startForegroundService() {
         String textToPass = "Example text";
-        Intent serviceIntent = new Intent(this, ForegroundServiceExample.class);
+        Intent serviceIntent = new Intent(this, ServiceExample.class);
         serviceIntent.putExtra(INPUT_EXTRA, textToPass);
         ContextCompat.startForegroundService(this, serviceIntent);
     }
 
     private void stopForegroundService() {
-        Intent serviceIntent = new Intent(this, ForegroundServiceExample.class);
+        Intent serviceIntent = new Intent(this, ServiceExample.class);
         stopService(serviceIntent);
     }
 
     private void scheduleJob() {
-        ComponentName componentName = new ComponentName(this, ExampleJobService.class);
+        ComponentName componentName = new ComponentName(this, JobServiceExample.class);
         JobInfo jobInfo = new JobInfo.Builder(JOB_ID, componentName)
                 .setPersisted(true)
                 .setPeriodic(15 * 60 * 1000) // cannot be set to less than 15 min, even if set to less than 15 min, then it will be turn to 15 min internally
