@@ -1,4 +1,7 @@
 <resources>
     <string name="app_name">Job Scheduler Demo</string>
-    <string name="action_stop_job">Stop Job</string>
+    <string name="action_start_plain_service">Start Plain Service</string>
+    <string name="action_start_job_service">Start JobService</string>
+    <string name="action_start_intent_service">Start IntentService</string>
+    <string name="action_start_job_intent_service">Start JobIntentService</string>
 </resources>

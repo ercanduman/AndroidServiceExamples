@@ -5,6 +5,7 @@ import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Intent;
 import android.os.IBinder;
+import android.os.SystemClock;
 import android.util.Log;
 
 import androidx.annotation.Nullable;
@@ -17,7 +18,7 @@ import static ercanduman.jobschedulerdemo.Constants.CHANNEL_ID;
 import static ercanduman.jobschedulerdemo.Constants.JOB_ID;
 
 public class ServiceExample extends Service {
-    private static final String TAG = "ForegroundService";
+    private static final String TAG = "ServiceExample";
 
     @Override
     public void onCreate() {
@@ -41,7 +42,7 @@ public class ServiceExample extends Service {
                 0);
 
         Notification notification = new NotificationCompat.Builder(this, CHANNEL_ID)
-                .setContentTitle("Foreground Service Example")
+                .setContentTitle("Plain Service Example")
                 .setContentText(passedData)
                 .setSmallIcon(R.drawable.ic_launcher_background)
                 .setContentIntent(pendingIntent)
@@ -51,6 +52,10 @@ public class ServiceExample extends Service {
         // when work finished, should stop service
         // stopSelf();
 
+        for (int i = 0; i < 5; i++) {
+            Log.d(TAG, "onStartCommand: called for i: " + i);
+            SystemClock.sleep(1000);
+        }
         return START_NOT_STICKY;
     }
 
