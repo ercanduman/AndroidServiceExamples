@@ -1,3 +1,4 @@
-# AndroidServicesExamples
-This app contains sample codes for JobService Example, Foreground Service Example, IntentService Example and JobIntentService Example. 
-If API level is 26+ then a notification shown as well for all services types.
+# Android Services and Service Examples with Notification
+This app contains sample codes for JobService, Foreground (Plain) Service, IntentService and JobIntentService examples.
+If API level is 26+ than a notification shown for each service type.
+
