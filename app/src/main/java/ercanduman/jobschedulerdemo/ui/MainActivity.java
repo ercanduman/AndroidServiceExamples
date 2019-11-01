@@ -24,6 +24,7 @@ import ercanduman.jobschedulerdemo.R;
 import ercanduman.jobschedulerdemo.services.ExampleJobService;
 import ercanduman.jobschedulerdemo.services.ForegroundServiceExample;
 import ercanduman.jobschedulerdemo.services.IntentServiceExample;
+import ercanduman.jobschedulerdemo.services.JobIntentServiceExample;
 
 import static ercanduman.jobschedulerdemo.Constants.CHANNEL_ID;
 import static ercanduman.jobschedulerdemo.Constants.JOB_ID;
@@ -52,11 +53,18 @@ public class MainActivity extends AppCompatActivity {
                                 Log.d(TAG, "onClick: will start the job...");
 //                                scheduleJob();
 //                                startForegroundService();
-                                startIntentService();
+//                                startIntentService();
+                                startJobIntentService();
                             }
                         }).show();
             }
         });
+    }
+
+    private void startJobIntentService() {
+        Intent serviceIntent = new Intent(this, JobIntentServiceExample.class);
+        serviceIntent.putExtra(INPUT_EXTRA, "Job intent service example data");
+        JobIntentServiceExample.enqueueWork(this, serviceIntent);
     }
 
     private void startIntentService() {
@@ -141,6 +149,7 @@ public class MainActivity extends AppCompatActivity {
 //            cancelJob();
 //            stopForegroundService();
             // Do not need to call stop Intent service, it finishes automatically when work is done.
+            // Do not need to call stop Job Intent service, it finishes automatically when work is done.
             return true;
         }
 
