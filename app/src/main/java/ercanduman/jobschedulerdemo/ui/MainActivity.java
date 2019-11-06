@@ -2,7 +2,9 @@ package ercanduman.jobschedulerdemo.ui;
 
 import android.app.job.JobInfo;
 import android.app.job.JobScheduler;
+import android.content.BroadcastReceiver;
 import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.net.ConnectivityManager;
@@ -11,6 +13,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -26,6 +29,8 @@ import ercanduman.jobschedulerdemo.services.JobIntentServiceExample;
 import ercanduman.jobschedulerdemo.services.JobServiceExample;
 import ercanduman.jobschedulerdemo.services.ServiceExample;
 
+import static ercanduman.jobschedulerdemo.Constants.BROADCAST_ACTION;
+import static ercanduman.jobschedulerdemo.Constants.BROADCAST_EXTRA;
 import static ercanduman.jobschedulerdemo.Constants.JOB_ID;
 
 public class MainActivity extends AppCompatActivity {
@@ -60,6 +65,15 @@ public class MainActivity extends AppCompatActivity {
                         }).show();
             }
         });
+
+        IntentFilter filter = new IntentFilter(BROADCAST_ACTION);
+        registerReceiver(implicitBroadcastReceiver, filter);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        unregisterReceiver(implicitBroadcastReceiver);
     }
 
     @Override
@@ -116,6 +130,23 @@ public class MainActivity extends AppCompatActivity {
         JobIntentServiceExample.enqueueWork(this, serviceIntent);
     }
 
+    /**
+     * Sends an implicit broadcast
+     */
+    private void sendABroadcast() {
+        Intent intent = new Intent(BROADCAST_ACTION);
+        intent.putExtra(BROADCAST_EXTRA, "This is an implicit broadcast example.");
+        sendBroadcast(intent);
+    }
+
+    private BroadcastReceiver implicitBroadcastReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String receivedText = intent.getStringExtra(BROADCAST_EXTRA);
+            Toast.makeText(context, receivedText, Toast.LENGTH_SHORT).show();
+        }
+    };
+
     private void stopPlainService() {
         Log.d(TAG, "stopPlainService: called...");
         Intent serviceIntent = new Intent(this, ServiceExample.class);
@@ -153,6 +184,9 @@ public class MainActivity extends AppCompatActivity {
                 return true;
             case R.id.action_start_job_intent_service:
                 startJobIntentService();
+                return true;
+            case R.id.action_start_broadcast_receiver:
+                sendABroadcast();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
