@@ -1,12 +1,11 @@
 package ercanduman.jobschedulerdemo.ui;
 
-import android.app.NotificationChannel;
-import android.app.NotificationManager;
 import android.app.job.JobInfo;
 import android.app.job.JobScheduler;
 import android.content.ComponentName;
 import android.content.Intent;
-import android.os.Build;
+import android.content.IntentFilter;
+import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -21,17 +20,23 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 
 import ercanduman.jobschedulerdemo.R;
+import ercanduman.jobschedulerdemo.services.BroadcastReceiverExample;
 import ercanduman.jobschedulerdemo.services.IntentServiceExample;
 import ercanduman.jobschedulerdemo.services.JobIntentServiceExample;
 import ercanduman.jobschedulerdemo.services.JobServiceExample;
 import ercanduman.jobschedulerdemo.services.ServiceExample;
 
-import static ercanduman.jobschedulerdemo.Constants.CHANNEL_ID;
 import static ercanduman.jobschedulerdemo.Constants.JOB_ID;
 
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = "MainActivity";
     public static final String INPUT_EXTRA = "INPUT_EXTRA";
+
+    /**
+     * Trigger broadcast receiver only when app is in foreground (onStart() method)
+     * and unregister when app goes to background (onStop() method)
+     */
+    private BroadcastReceiverExample broadcastReceiver = new BroadcastReceiverExample();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,8 +44,6 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
-        createNotificationChannel();
 
         FloatingActionButton fab = findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -57,6 +60,21 @@ public class MainActivity extends AppCompatActivity {
                         }).show();
             }
         });
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        IntentFilter filter = new IntentFilter();
+        filter.addAction(ConnectivityManager.CONNECTIVITY_ACTION);
+        filter.addAction(Intent.ACTION_USER_PRESENT);
+        registerReceiver(broadcastReceiver, filter);
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        unregisterReceiver(broadcastReceiver);
     }
 
     private void startPlainService() {
@@ -112,23 +130,6 @@ public class MainActivity extends AppCompatActivity {
             Log.d(TAG, "cancelJob: Job cancelled.");
         }
     }
-
-    public void createNotificationChannel() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            Log.d(TAG, "createNotificationChannel: Notification created...");
-            NotificationChannel serviceChannel = new NotificationChannel(
-                    CHANNEL_ID,
-                    "Example Service Channel",
-                    NotificationManager.IMPORTANCE_DEFAULT
-            );
-
-            NotificationManager manager = getSystemService(NotificationManager.class);
-            if (manager != null) {
-                manager.createNotificationChannel(serviceChannel);
-            }
-        }
-    }
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

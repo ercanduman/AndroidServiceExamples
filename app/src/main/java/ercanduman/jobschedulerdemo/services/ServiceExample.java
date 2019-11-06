@@ -15,10 +15,10 @@ import ercanduman.jobschedulerdemo.R;
 import ercanduman.jobschedulerdemo.ui.MainActivity;
 
 import static ercanduman.jobschedulerdemo.Constants.CHANNEL_ID;
-import static ercanduman.jobschedulerdemo.Constants.JOB_ID;
 
 public class ServiceExample extends Service {
     private static final String TAG = "ServiceExample";
+    private static final int NOTIFICATION_ID = 1;
 
     @Override
     public void onCreate() {
@@ -31,7 +31,7 @@ public class ServiceExample extends Service {
         // all codes written here runs on main thread
         // so do the heavy work on the background
 
-        Log.d(TAG, "onStartCommand: called every  time service started...");
+        Log.d(TAG, "onStartCommand: called every time service started...");
         String passedData = intent.getStringExtra(MainActivity.INPUT_EXTRA);
         Log.d(TAG, "onStartCommand: passedData: " + passedData);
 
@@ -47,11 +47,14 @@ public class ServiceExample extends Service {
                 .setSmallIcon(R.drawable.ic_launcher_background)
                 .setContentIntent(pendingIntent)
                 .build();
-        startForeground(JOB_ID, notification);
+        startForeground(NOTIFICATION_ID, notification);
 
         // when work finished, should stop service
         // stopSelf();
 
+        /*
+          This for loop freezes the app to indicate that all the work done in main thread
+         */
         for (int i = 0; i < 5; i++) {
             Log.d(TAG, "onStartCommand: called for i: " + i);
             SystemClock.sleep(1000);
