@@ -20,6 +20,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.ContextCompat;
 import androidx.lifecycle.Observer;
+import androidx.work.Data;
 import androidx.work.OneTimeWorkRequest;
 import androidx.work.WorkInfo;
 import androidx.work.WorkManager;
@@ -42,6 +43,8 @@ import static ercanduman.jobschedulerdemo.Constants.JOB_ID;
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = "MainActivity";
     public static final String INPUT_EXTRA = "INPUT_EXTRA";
+    public static final String EXTRA_TASK_NAME = "EXTRA_TASK_NAME";
+    public static final String EXTRA_TASK_DESC = "EXTRA_TASK_DESC";
 
     /**
      * Trigger broadcast receiver only when app is in foreground (onStart() method)
@@ -159,7 +162,17 @@ public class MainActivity extends AppCompatActivity {
 
     private void startWorkManager() {
         Toast.makeText(this, "Work Manager started.", Toast.LENGTH_SHORT).show();
-        OneTimeWorkRequest workRequest = new OneTimeWorkRequest.Builder(WorkManagerExample.class).build();
+
+        // Passing data to Work Manager (works similar mechanism of Bundles)
+        // can pass multiple inputs
+        Data passingData = new Data.Builder()
+                .putString(EXTRA_TASK_NAME, "Passed Task Name")
+                .putString(EXTRA_TASK_DESC, "Passed Task Desc")
+                .build();
+
+        OneTimeWorkRequest workRequest = new OneTimeWorkRequest.Builder(WorkManagerExample.class)
+                .setInputData(passingData)
+                .build();
         WorkManager.getInstance(this).enqueue(workRequest);
 
         WorkManager.getInstance(this).getWorkInfoByIdLiveData(workRequest.getId())

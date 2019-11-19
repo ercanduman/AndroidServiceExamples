@@ -5,6 +5,7 @@ import android.app.NotificationManager;
 import android.content.Context;
 import android.os.Build;
 import android.os.SystemClock;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.core.app.NotificationCompat;
@@ -12,11 +13,12 @@ import androidx.work.Worker;
 import androidx.work.WorkerParameters;
 
 import ercanduman.jobschedulerdemo.R;
+import ercanduman.jobschedulerdemo.ui.MainActivity;
 
 import static ercanduman.jobschedulerdemo.Constants.CHANNEL_ID;
 
 public class WorkManagerExample extends Worker {
-    private boolean isFinishedSuccessfully;
+    private static final String TAG = "WorkManagerExample";
 
     public WorkManagerExample(@NonNull Context context, @NonNull WorkerParameters workerParams) {
         super(context, workerParams);
@@ -25,19 +27,27 @@ public class WorkManagerExample extends Worker {
     @NonNull
     @Override
     public Result doWork() {
+        Log.d(TAG, "doWork: started...");
         // Works on a background thread
-        createNotification("Task 1", "Desc 1");
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                for (int i = 0; i < 10; i++) {
-                    SystemClock.sleep(1000);
-                }
-                isFinishedSuccessfully = true;
-            }
-        }).start();
-        if (isFinishedSuccessfully) return Result.success();
-        else return Result.failure();
+
+        //Retrieve the passed data
+        String taskName = getInputData().getString(MainActivity.EXTRA_TASK_NAME);
+        String taskDesc = getInputData().getString(MainActivity.EXTRA_TASK_DESC);
+        int i = 0;
+        while (i < 10) {
+            Log.d(TAG, "doWork: run for " + i);
+            SystemClock.sleep(1000);
+            i++;
+        }
+
+        if (i == 10) {
+            Log.d(TAG, "doWork: notification going to be shown...");
+            createNotification(taskName + " SUCCESS!", taskDesc);
+            return Result.success();
+        } else {
+            createNotification(taskName + " FAILED!", taskDesc);
+            return Result.failure();
+        }
     }
 
     private void createNotification(String task, String desc) {
