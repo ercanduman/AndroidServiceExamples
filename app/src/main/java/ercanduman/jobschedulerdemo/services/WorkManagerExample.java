@@ -47,7 +47,7 @@ public class WorkManagerExample extends Worker {
                     .putBoolean(TASK_OUTPUT, true)
                     .build();
 
-            Log.d(TAG, "doWork: notification going to be shown...");
+            Log.d(TAG, "doWork: notification going to be shown \" SUCCESS!\"");
             createNotification(taskName + " SUCCESS!", taskDesc);
             return Result.success(outputData);
         } else {
@@ -55,6 +55,7 @@ public class WorkManagerExample extends Worker {
             Data outputData = new Data.Builder()
                     .putBoolean(TASK_OUTPUT, false)
                     .build();
+            Log.d(TAG, "doWork: notification going to be shown \" FAILED!\"");
             createNotification(taskName + " FAILED!", taskDesc);
             return Result.failure(outputData);
         }

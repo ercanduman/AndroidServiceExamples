@@ -20,7 +20,9 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.ContextCompat;
 import androidx.lifecycle.Observer;
+import androidx.work.Constraints;
 import androidx.work.Data;
+import androidx.work.NetworkType;
 import androidx.work.OneTimeWorkRequest;
 import androidx.work.WorkInfo;
 import androidx.work.WorkManager;
@@ -170,9 +172,15 @@ public class MainActivity extends AppCompatActivity {
                 .putString(EXTRA_TASK_DESC, "Passed Task Desc")
                 .build();
 
+        Constraints constraints = new Constraints.Builder()
+                .setRequiredNetworkType(NetworkType.CONNECTED)
+                .build();
+
         OneTimeWorkRequest workRequest = new OneTimeWorkRequest.Builder(WorkManagerExample.class)
                 .setInputData(passingData)
+                .setConstraints(constraints)
                 .build();
+
         WorkManager.getInstance(this).enqueue(workRequest);
 
         WorkManager.getInstance(this).getWorkInfoByIdLiveData(workRequest.getId())
@@ -185,16 +193,15 @@ public class MainActivity extends AppCompatActivity {
                         }
 
                         String status = workInfo.getState().name();
-                        contentTextView.append("Work State: " + status + "\n");
+                        contentTextView.append("Work State Name: " + status + "\n");
 
                         // Passed data back
-                        boolean isSuccess = workInfo.getOutputData().getBoolean(WorkManagerExample.TASK_OUTPUT, false);
-                        Log.d(TAG, "onChanged: work output data result: " + isSuccess);
-
                         // The output data will be received only when workInfo is finished
                         if (workInfo.getState().isFinished()) {
                             boolean finishResult = workInfo.getOutputData().getBoolean(WorkManagerExample.TASK_OUTPUT, false);
                             Log.d(TAG, "onChanged: work output data finishResult: " + finishResult);
+                        } else {
+                            Log.d(TAG, "onChanged: workInfo not finished yet...");
                         }
                     }
                 });
