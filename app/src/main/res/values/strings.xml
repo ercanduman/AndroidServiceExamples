@@ -5,4 +5,5 @@
     <string name="action_start_intent_service">Start IntentService</string>
     <string name="action_start_job_intent_service">Start JobIntentService</string>
     <string name="action_send_broadcast">Send Broadcast</string>
+    <string name="action_work_manager">Work Manager</string>
 </resources>

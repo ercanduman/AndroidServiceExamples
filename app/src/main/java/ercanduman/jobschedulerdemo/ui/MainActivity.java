@@ -13,11 +13,16 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.ContextCompat;
+import androidx.lifecycle.Observer;
+import androidx.work.OneTimeWorkRequest;
+import androidx.work.WorkInfo;
+import androidx.work.WorkManager;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
@@ -28,6 +33,7 @@ import ercanduman.jobschedulerdemo.services.IntentServiceExample;
 import ercanduman.jobschedulerdemo.services.JobIntentServiceExample;
 import ercanduman.jobschedulerdemo.services.JobServiceExample;
 import ercanduman.jobschedulerdemo.services.ServiceExample;
+import ercanduman.jobschedulerdemo.services.WorkManagerExample;
 
 import static ercanduman.jobschedulerdemo.Constants.BROADCAST_ACTION;
 import static ercanduman.jobschedulerdemo.Constants.BROADCAST_EXTRA;
@@ -42,6 +48,8 @@ public class MainActivity extends AppCompatActivity {
      * and unregister when app goes to background (onStop() method)
      */
     private BroadcastReceiverExample broadcastReceiver = new BroadcastReceiverExample();
+
+    private TextView contentTextView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,6 +76,8 @@ public class MainActivity extends AppCompatActivity {
 
         IntentFilter filter = new IntentFilter(BROADCAST_ACTION);
         registerReceiver(implicitBroadcastReceiver, filter);
+
+        contentTextView = findViewById(R.id.main_content_text_view);
     }
 
     @Override
@@ -147,6 +157,21 @@ public class MainActivity extends AppCompatActivity {
         }
     };
 
+    private void startWorkManager() {
+        Toast.makeText(this, "Work Manager started.", Toast.LENGTH_SHORT).show();
+        OneTimeWorkRequest workRequest = new OneTimeWorkRequest.Builder(WorkManagerExample.class).build();
+        WorkManager.getInstance(this).enqueue(workRequest);
+
+        WorkManager.getInstance(this).getWorkInfoByIdLiveData(workRequest.getId())
+                .observe(this, new Observer<WorkInfo>() {
+                    @Override
+                    public void onChanged(WorkInfo workInfo) {
+                        String status = workInfo.getState().name();
+                        contentTextView.append("Work State: " + status + "\n");
+                    }
+                });
+    }
+
     private void stopPlainService() {
         Log.d(TAG, "stopPlainService: called...");
         Intent serviceIntent = new Intent(this, ServiceExample.class);
@@ -187,6 +212,9 @@ public class MainActivity extends AppCompatActivity {
                 return true;
             case R.id.action_start_broadcast_receiver:
                 sendABroadcast();
+                return true;
+            case R.id.action_start_work_manager:
+                startWorkManager();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);

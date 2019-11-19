@@ -27,4 +27,9 @@
         android:orderInCategory="104"
         android:title="@string/action_send_broadcast"
         app:showAsAction="never" />
+    <item
+        android:id="@+id/action_start_work_manager"
+        android:orderInCategory="105"
+        android:title="@string/action_work_manager"
+        app:showAsAction="never" />
 </menu>
