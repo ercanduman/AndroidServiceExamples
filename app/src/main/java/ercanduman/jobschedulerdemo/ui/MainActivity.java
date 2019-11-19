@@ -179,8 +179,23 @@ public class MainActivity extends AppCompatActivity {
                 .observe(this, new Observer<WorkInfo>() {
                     @Override
                     public void onChanged(WorkInfo workInfo) {
+                        if (workInfo == null) {
+                            Log.d(TAG, "onChanged: workInfo is null!");
+                            return;
+                        }
+
                         String status = workInfo.getState().name();
                         contentTextView.append("Work State: " + status + "\n");
+
+                        // Passed data back
+                        boolean isSuccess = workInfo.getOutputData().getBoolean(WorkManagerExample.TASK_OUTPUT, false);
+                        Log.d(TAG, "onChanged: work output data result: " + isSuccess);
+
+                        // The output data will be received only when workInfo is finished
+                        if (workInfo.getState().isFinished()) {
+                            boolean finishResult = workInfo.getOutputData().getBoolean(WorkManagerExample.TASK_OUTPUT, false);
+                            Log.d(TAG, "onChanged: work output data finishResult: " + finishResult);
+                        }
                     }
                 });
     }

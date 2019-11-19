@@ -9,6 +9,7 @@ import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.core.app.NotificationCompat;
+import androidx.work.Data;
 import androidx.work.Worker;
 import androidx.work.WorkerParameters;
 
@@ -19,6 +20,7 @@ import static ercanduman.jobschedulerdemo.Constants.CHANNEL_ID;
 
 public class WorkManagerExample extends Worker {
     private static final String TAG = "WorkManagerExample";
+    public static final String TASK_OUTPUT = "TASK_OUTPUT";
 
     public WorkManagerExample(@NonNull Context context, @NonNull WorkerParameters workerParams) {
         super(context, workerParams);
@@ -39,14 +41,22 @@ public class WorkManagerExample extends Worker {
             SystemClock.sleep(1000);
             i++;
         }
-
         if (i == 10) {
+            // Can pass data back
+            Data outputData = new Data.Builder()
+                    .putBoolean(TASK_OUTPUT, true)
+                    .build();
+
             Log.d(TAG, "doWork: notification going to be shown...");
             createNotification(taskName + " SUCCESS!", taskDesc);
-            return Result.success();
+            return Result.success(outputData);
         } else {
+            // Can pass data back
+            Data outputData = new Data.Builder()
+                    .putBoolean(TASK_OUTPUT, false)
+                    .build();
             createNotification(taskName + " FAILED!", taskDesc);
-            return Result.failure();
+            return Result.failure(outputData);
         }
     }
 
